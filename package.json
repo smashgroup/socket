@@ -1,0 +1,19 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bufferutil": "^4.0.8",
+    "express": "^4.21.1",
+    "geolib": "^3.3.4",
+    "utf-8-validate": "^6.0.5",
+    "ws": "^8.18.0"
+  }
+}
