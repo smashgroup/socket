@@ -5,9 +5,10 @@ const WebSocket = require("ws");
 const geolib = require("geolib");
 
 const app = express();
-// const PORT = process.env.PORT || 3000;
 
-const PORT = 4000;
+const PORT = process.env.PORT || 3000;
+
+// const PORT = 4000;
 
 
 const server = http.createServer(app);
@@ -19,9 +20,9 @@ let drivers = {};
 
 // create websocket server
 
-// const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server });
 
-const wss = new WebSocket.Server({ port: 8080 });
+// const wss = new WebSocket.Server({ port: 8080 });
 
 
 wss.on("connection", (ws) => {
