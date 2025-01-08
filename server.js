@@ -1,4 +1,3 @@
-
 const express = require("express");
 const http = require('http');
 const WebSocket = require("ws");
@@ -6,12 +5,12 @@ const geolib = require("geolib");
 
 const app = express();
 
-// const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-const PORT = 4000;
+// const PORT = 4000;
 
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
 
 // store drivers locations
@@ -20,13 +19,15 @@ let drivers = {};
 
 // create websocket server
 
-// const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server });
 
-const wss = new WebSocket.Server({ port: 8080 });
+// const wss = new WebSocket.Server({ port: 8080 });
 
 
 wss.on("connection", (ws) => {
+
     ws.on("message", (message) => {
+        
         try {
             const data = JSON.parse(message);
             console.log(`Received message: `, data);
