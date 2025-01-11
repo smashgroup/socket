@@ -1,100 +1,104 @@
 'use strict';
 
-const express = require("express");
-const WebSocket = require("ws");
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-const wss = new WebSocket.Server({ server });
-
-wss.on("connection", (ws) => {
-  console.log("New WebSocket connection");
-
-  // Send a message to the client
-  ws.send("Hello from the server!");
-
-  // Listen for messages from the client
-  ws.on("message", (message) => {
-    console.log(`Received: ${message}`);
-  });
-
-  ws.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
-
-
 // const express = require("express");
-// const http = require('http');
 // const WebSocket = require("ws");
-// const geolib = require("geolib");
 
 // const app = express();
+// const port = process.env.PORT || 3000;
 
-// const PORT = process.env.PORT || 3000;
+// const server = app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
 
-// // const PORT = 4000;
+// const wss = new WebSocket.Server({ server });
+
+// wss.on("connection", (ws) => {
+//   console.log("New WebSocket connection");
+
+//   // Send a message to the client
+//   ws.send("Hello from the server!");
+
+//   // Listen for messages from the client
+//   ws.on("message", (message) => {
+//     console.log(`Received: ${message}`);
+//   });
+
+//   ws.on("close", () => {
+//     console.log("Client disconnected");
+//   });
+// });
+
+
+const express = require("express");
+// const http = require('http');
+const WebSocket = require("ws");
+const geolib = require("geolib");
+
+const app = express();
+
+const port = process.env.PORT || 3000;
+
+// const PORT = 4000;
 
 
 // const server = http.createServer(app);
 
-
-// // store drivers locations
-
-// let drivers = {};
-
-// // create websocket server
-
-// const wss = new WebSocket.Server({ server });
-
-// // const wss = new WebSocket.Server({ port: 8080 });
+const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 
 
-// wss.on("connection", (ws) => {
+// store drivers locations
 
-//     ws.on("message", (message) => {
+let drivers = {};
 
-//         try {
-//             const data = JSON.parse(message);
-//             console.log(`Received message: `, data);
+// create websocket server
 
-//             if (data.type === "locationUpdate" && data.role === "driver") {
-//                 drivers[data.driver] = {
-//                     latitude: data.data.latitude,
-//                     longitude: data.data.longitude,
-//                 }
-//                 console.log(`updated driver location:`, drivers[data.driver])
-//             }
+const wss = new WebSocket.Server({ server });
 
-//             if (data.type === "requestRide" && data.role === "user") {
-//                 const nearbyDrivers = findNearbyDrivers(data.latitude, data.longitude);
+// const wss = new WebSocket.Server({ port: 8080 });
 
-//                 ws.send(
-//                     JSON.stringify({type: "nearbyDrivers", drivers: nearbyDrivers})
-//                 )
-//             }
 
-//         } catch (error) {
-//             console.log('Failed to parse Websocket message', error)
-//         }
-//     })
-// })
+wss.on("connection", (ws) => {
 
-// const findNearbyDrivers = (userLat, userLon) => {
-//     return Object.entries(drivers).filter(([id,location]) => {
-//         const distance = geolib.getDistance({
-//             latitude: userLat, 
-//             longitude: userLon
-//         }, location);
-//         return distance <= 5000  // 5kilometers
-//     })
-//     .map(([id, location]) => ({id, ...location}));
-// };
+    ws.on("message", (message) => {
+
+        try {
+            const data = JSON.parse(message);
+            console.log(`Received message: `, data);
+
+            if (data.type === "locationUpdate" && data.role === "driver") {
+                drivers[data.driver] = {
+                    latitude: data.data.latitude,
+                    longitude: data.data.longitude,
+                }
+                console.log(`updated driver location:`, drivers[data.driver])
+            }
+
+            if (data.type === "requestRide" && data.role === "user") {
+                const nearbyDrivers = findNearbyDrivers(data.latitude, data.longitude);
+
+                ws.send(
+                    JSON.stringify({type: "nearbyDrivers", drivers: nearbyDrivers})
+                )
+            }
+
+        } catch (error) {
+            console.log('Failed to parse Websocket message', error)
+        }
+    })
+})
+
+const findNearbyDrivers = (userLat, userLon) => {
+    return Object.entries(drivers).filter(([id,location]) => {
+        const distance = geolib.getDistance({
+            latitude: userLat, 
+            longitude: userLon
+        }, location);
+        return distance <= 5000  // 5kilometers
+    })
+    .map(([id, location]) => ({id, ...location}));
+};
 
 
 // // server.listen(PORT, () => {
