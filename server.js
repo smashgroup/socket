@@ -71,15 +71,10 @@
 // });
 
 
-
-
-
-'use strict';
-
-const express = require("express");
+const express = require('express');
 const http = require('http');
-const WebSocket = require("ws");
-const geolib = require("geolib");
+const WebSocket = require('ws');
+const geolib = require('geolib');
 
 const app = express();
 
@@ -97,13 +92,15 @@ const server = http.createServer(app);
 
 // store drivers locations
 
-let drivers = {};
+
 
 // create websocket server
 
 const wss = new WebSocket.Server({ server });
 
 // const wss = new WebSocket.Server({ port: 8080 });
+
+let drivers = [];
 
 
 wss.on("connection", (ws) => {
