@@ -30,7 +30,7 @@
 
 
 const express = require("express");
-// const http = require('http');
+const http = require('http');
 const WebSocket = require("ws");
 const geolib = require("geolib");
 
@@ -41,11 +41,11 @@ const port = process.env.PORT || 3000;
 // const PORT = 4000;
 
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
-const server = app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+// const server = app.listen(port, () => {
+//     console.log(`Server is running on port ${port}`);
+//   });
 
 
 // store drivers locations
@@ -105,9 +105,9 @@ const findNearbyDrivers = (userLat, userLon) => {
 // //     console.log(`Server is listening on port ${PORT}`);
 // // });
 
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`)
-// })
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+})
 
 
 
