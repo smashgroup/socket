@@ -110,17 +110,41 @@ wss.on("connection", (ws) => {
     ws.on("message", (message) => {
 
         try {
-            
-            const data = JSON.parse(message);
-            console.log(`Received message: `, data);
 
-            if (data.type === "locationUpdate" && data.role === "driver") {
-                drivers[data.driver] = {
-                    latitude: data.data.latitude,
-                    longitude: data.data.longitude,
-                }
-                console.log(`updated driver location:`, drivers[data.driver])
+            const data = JSON.parse(message);
+
+            console.log(`Received message: `, data);
+            if (data.type === 'locationUpdate') {
+                
+            // Update the driver's location in the list
+            const { driverId, location, role } = data;
+    
+            // Find the existing driver and update their position
+            let driver = drivers.find(d => d.driverId === driverId);
+            if (driver) {
+                driver.latitude = location.latitude;
+                driver.longitude = location.longitude;
+            } else {
+                // Add new driver to the list
+                drivers.push({ driverId, latitude, longitude });
             }
+    
+            // Send nearby drivers to all connected clients
+            // broadcastNearbyDrivers(driverId);
+            }
+
+
+            
+            // const data = JSON.parse(message);
+            // console.log(`Received message: `, data);
+
+            // if (data.type === "locationUpdate" && data.role === "driver") {
+            //     drivers[data.driver] = {
+            //         latitude: data.data.latitude,
+            //         longitude: data.data.longitude,
+            //     }
+            //     console.log(`updated driver location:`, drivers[data.driver])
+            // }
 
             if (data.type === "requestRide" && data.role === "user") {
                 const nearbyDrivers = findNearbyDrivers(data.latitude, data.longitude);
