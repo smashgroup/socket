@@ -142,7 +142,6 @@ wss.on("connection", (ws) => {
         }
     })
 })
-
 // Find nearby drivers function on request by rider
 
 const findNearbyDrivers = (userLat, userLon) => {
