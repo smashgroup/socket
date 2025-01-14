@@ -89,10 +89,6 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
-// const server = app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-//   });
-
 
 // store drivers locations
 
@@ -115,42 +111,20 @@ wss.on("connection", (ws) => {
 
         try {
 
+          
             const data = JSON.parse(message);
 
-            console.log(`Received message: `, data);
-            if (data.type === 'locationUpdate') {
-                
-            // Update the driver's location in the list
-            // const { driverId, location, role } = data;
-
-            const { driverId, latitude, longitude } = data;
-    
-            // Find the existing driver and update their position
-            let driver = drivers.find(d => d.driverId === driverId);
-            if (driver) {
-                driver.latitude = location.latitude;
-                driver.longitude = location.longitude;
-            } else {
-                // Add new driver to the list
-                drivers.push({ driverId, latitude, longitude });
-            }
-    
-            // Send nearby drivers to all connected clients
-            // broadcastNearbyDrivers(driverId);
-            }
-
-
+            const {driver, role, type, location} = data 
             
-            // const data = JSON.parse(message);
-            // console.log(`Received message: `, data);
+            console.log(`Received message: `, data);
 
-            // if (data.type === "locationUpdate" && data.role === "driver") {
-            //     drivers[data.driver] = {
-            //         latitude: data.data.latitude,
-            //         longitude: data.data.longitude,
-            //     }
-            //     console.log(`updated driver location:`, drivers[data.driver])
-            // }
+            if (data.type === "locationUpdate" && data.role === "driver") {
+                drivers[data.driver] = {
+                    latitude: data.location.latitude,
+                    longitude: data.location.longitude,
+                }
+                console.log(`updated driver location:`, drivers[data.driver])
+            }
 
             if (data.type === "requestRide" && data.role === "user") {
                 const nearbyDrivers = findNearbyDrivers(data.latitude, data.longitude);
@@ -160,11 +134,16 @@ wss.on("connection", (ws) => {
                 )
             }
 
+              // Send nearby drivers to all connected clients
+                broadcastNearbyDrivers(driver.driverId);
+
         } catch (error) {
             console.log('Failed to parse Websocket message', error)
         }
     })
 })
+
+// Find nearby drivers function on request by rider
 
 const findNearbyDrivers = (userLat, userLon) => {
     return Object.entries(drivers).filter(([id,location]) => {
@@ -176,6 +155,19 @@ const findNearbyDrivers = (userLat, userLon) => {
     })
     .map(([id, location]) => ({id, ...location}));
 };
+
+// Send nearby drivers to connected riders
+
+const broadcastNearbyDrivers = (driverId) => {
+    const nearbyDrivers = drivers.filter(driver => driver.driverId !== driverId);
+  
+    // Send the list of nearby drivers to all clients
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'nearbyDrivers', data: nearbyDrivers }));
+      }
+    });
+  };
 
 
 server.listen(PORT, () => {
