@@ -26,7 +26,7 @@ let drivers = [];
 
 wss.on("connection", (ws) => {
 
-    // console.log('A driver has connected');
+    console.log('A driver has connected');
 
     // Incomming messages handled here
 
@@ -43,27 +43,28 @@ wss.on("connection", (ws) => {
 
             // update driver location
 
-            if (data.type === "locationUpdate" && data.role === "driver") {
+            if (data.type === "locationUpdate" ) {
 
-                const { driverId, latitude, longitude } = data;
+                // const { driverId, latitude, longitude } = data;
 
-                // Find the existing driver and update their position
-                let driver = drivers.find(d => d.driverId === driverId);
-                if (driver) {
-                  driver.latitude = latitude;
-                  driver.longitude = longitude;
-                } else {
-                  // Add new driver to the list
-                  drivers.push({ driverId, latitude, longitude });
-                }
+                // // Find the existing driver and update their position
+                // let driver = drivers.find(d => d.driverId === driverId);
+                // if (driver) {
+                //   driver.latitude = latitude;
+                //   driver.longitude = longitude;
+                // } else {
+                //   // Add new driver to the list
+                //   drivers.push({ driverId, latitude, longitude });
+                // }
         
 
 
-                // drivers[data.driver] = {
-                //     latitude: data.location.location.latitude,
-                //     longitude: data.location.location.longitude,
-                // }
-                // console.log(`updated driver location:`, drivers[data.driver])
+                drivers[data.driver] = {
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                }
+
+                console.log(`updated driver location:`, drivers[data.driver])
             }
 
             // rider request for a nearby driver
@@ -78,7 +79,7 @@ wss.on("connection", (ws) => {
 
             // Send nearby drivers to all connected clients
                 
-            broadcastNearbyDrivers(driverId);
+            // broadcastNearbyDrivers(driverId);
 
         } catch (error) {
             console.log('Failed to parse Websocket message', error)
