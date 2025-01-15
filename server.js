@@ -44,11 +44,26 @@ wss.on("connection", (ws) => {
             // update driver location
 
             if (data.type === "locationUpdate" && data.role === "driver") {
-                drivers[data.driver] = {
-                    latitude: data.location.location.latitude,
-                    longitude: data.location.location.longitude,
+
+                const { driverId, latitude, longitude } = data;
+
+                // Find the existing driver and update their position
+                let driver = drivers.find(d => d.driverId === driverId);
+                if (driver) {
+                  driver.latitude = latitude;
+                  driver.longitude = longitude;
+                } else {
+                  // Add new driver to the list
+                  drivers.push({ driverId, latitude, longitude });
                 }
-                console.log(`updated driver location:`, drivers[data.driver])
+        
+
+
+                // drivers[data.driver] = {
+                //     latitude: data.location.location.latitude,
+                //     longitude: data.location.location.longitude,
+                // }
+                // console.log(`updated driver location:`, drivers[data.driver])
             }
 
             // rider request for a nearby driver
@@ -79,16 +94,33 @@ wss.on("connection", (ws) => {
 })
 // Find nearby drivers function on request by rider
 
-const findNearbyDrivers = (userLat, userLon) => {
-    return Object.entries(drivers).filter(([id,location]) => {
-        const distance = geolib.getDistance({
-            latitude: userLat, 
-            longitude: userLon
-        }, location);
-        return distance <= 5000  // 5kilometers
-    })
-    .map(([id, location]) => ({id, ...location}));
-};
+// const findNearbyDrivers = (userLat, userLon) => {
+    
+//     return Object.entries(drivers).filter(([id,location]) => {
+//         const distance = geolib.getDistance({
+//             latitude: userLat, 
+//             longitude: userLon
+//         }, location);
+//         return distance <= 5000  // 5kilometers
+//     })
+//     .map(([id, location]) => ({id, ...location}));
+// };
+
+
+const findNearbyDrivers = (userLat, userLon, drivers, maxDistance = 5000) => {
+    // Filter drivers based on the distance to the user's location
+    const nearbyDrivers = drivers.filter((driver) => {
+      const distance = geolib.getDistance(
+        { latitude: userLat, longitude: userLon },
+        { latitude: driver.latitude, longitude: driver.longitude }
+      );
+      
+      // Return true if the driver is within the maxDistance (in meters)
+      return distance <= maxDistance;
+    });
+  
+    return nearbyDrivers;
+  };
 
 // Send nearby drivers to connected riders
 
@@ -285,10 +317,10 @@ server.listen(PORT, () => {
 //   // When a driver sends their location
 //   ws.on('message', (message) => {
 //     try {
-//       const locationData = JSON.parse(message);
-//       if (locationData.type === 'locationUpdate') {
+//       const data = JSON.parse(message);
+//       if (data.type === 'locationUpdate') {
 //         // Update the driver's location in the list
-//         const { driverId, latitude, longitude } = locationData;
+//         const { driverId, latitude, longitude } = data;
 
 //         // Find the existing driver and update their position
 //         let driver = drivers.find(d => d.driverId === driverId);
