@@ -37,7 +37,7 @@ wss.on("connection", (ws) => {
           
             const data = JSON.parse(message);
 
-            const {driver, role, type, location} = data 
+            // const {driver, role, type, location} = data 
             
             console.log(`Received message: `, data);
 
@@ -45,8 +45,8 @@ wss.on("connection", (ws) => {
 
             if (data.type === "locationUpdate" && data.role === "driver") {
                 drivers[data.driver] = {
-                    latitude: data.location.latitude,
-                    longitude: data.location.longitude,
+                    latitude: data.location.location.latitude,
+                    longitude: data.location.location.longitude,
                 }
                 console.log(`updated driver location:`, drivers[data.driver])
             }
@@ -63,7 +63,7 @@ wss.on("connection", (ws) => {
 
             // Send nearby drivers to all connected clients
                 
-            broadcastNearbyDrivers(driver.driverId);
+            // broadcastNearbyDrivers(driver.driverId);
 
         } catch (error) {
             console.log('Failed to parse Websocket message', error)
@@ -92,16 +92,16 @@ const findNearbyDrivers = (userLat, userLon) => {
 
 // Send nearby drivers to connected riders
 
-const broadcastNearbyDrivers = (driverId) => {
-    const nearbyDrivers = drivers.filter(driver => driver.driverId !== driverId);
+// const broadcastNearbyDrivers = (driverId) => {
+//     const nearbyDrivers = drivers.filter(driver => driver.driverId !== driverId);
   
-    // Send the list of nearby drivers to all clients
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ type: 'nearbyDrivers', data: nearbyDrivers }));
-      }
-    });
-  };
+//     // Send the list of nearby drivers to all clients
+//     wss.clients.forEach(client => {
+//       if (client.readyState === WebSocket.OPEN) {
+//         client.send(JSON.stringify({ type: 'nearbyDrivers', data: nearbyDrivers }));
+//       }
+//     });
+//   };
 
 
 server.listen(PORT, () => {
