@@ -94,33 +94,33 @@ wss.on("connection", (ws) => {
 })
 // Find nearby drivers function on request by rider
 
-// const findNearbyDrivers = (userLat, userLon) => {
+const findNearbyDrivers = (userLat, userLon) => {
     
-//     return Object.entries(drivers).filter(([id,location]) => {
-//         const distance = geolib.getDistance({
-//             latitude: userLat, 
-//             longitude: userLon
-//         }, location);
-//         return distance <= 5000  // 5kilometers
-//     })
-//     .map(([id, location]) => ({id, ...location}));
-// };
+    return Object.entries(drivers).filter(([id,location]) => {
+        const distance = geolib.getDistance({
+            latitude: userLat, 
+            longitude: userLon
+        }, location);
+        return distance <= 5000  // 5kilometers
+    })
+    .map(([id, location]) => ({id, ...location}));
+};
 
 
-const findNearbyDrivers = (userLat, userLon, drivers, maxDistance = 5000) => {
-    // Filter drivers based on the distance to the user's location
-    const nearbyDrivers = Object.entries(drivers).filter((driver) => {
-      const distance = geolib.getDistance(
-        { latitude: userLat, longitude: userLon },
-        { latitude: driver.latitude, longitude: driver.longitude }
-      );
+// const findNearbyDrivers = (userLat, userLon, drivers, maxDistance = 5000) => {
+//     // Filter drivers based on the distance to the user's location
+//     const nearbyDrivers = Object.entries(drivers).filter((driver) => {
+//       const distance = geolib.getDistance(
+//         { latitude: userLat, longitude: userLon },
+//         { latitude: driver.latitude, longitude: driver.longitude }
+//       );
       
-      // Return true if the driver is within the maxDistance (in meters)
-      return distance <= maxDistance;
-    });
+//       // Return true if the driver is within the maxDistance (in meters)
+//       return distance <= maxDistance;
+//     });
   
-    return nearbyDrivers;
-  };
+//     return nearbyDrivers;
+//   };
 
 // Send nearby drivers to connected riders
 
