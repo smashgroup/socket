@@ -78,7 +78,7 @@ wss.on("connection", (ws) => {
 
             // Send nearby drivers to all connected clients
                 
-            // broadcastNearbyDrivers(driver.driverId);
+            broadcastNearbyDrivers(driverId);
 
         } catch (error) {
             console.log('Failed to parse Websocket message', error)
@@ -106,6 +106,28 @@ const findNearbyDrivers = (userLat, userLon) => {
     .map(([id, location]) => ({id, ...location}));
 };
 
+// BROADCAST NEARBY DRIVER TO RIDERS
+
+
+const broadcastNearbyDrivers = (driverId) => {
+    const nearbyDrivers = drivers.filter(driver => driver.driverId !== driverId);
+  
+    // Send the list of nearby drivers to all clients
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'nearbyDrivers', data: nearbyDrivers }));
+      }
+    });
+  };
+
+
+server.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+});
+
+
+
+
 
 // const findNearbyDrivers = (userLat, userLon, drivers, maxDistance = 5000) => {
 //     // Filter drivers based on the distance to the user's location
@@ -123,28 +145,6 @@ const findNearbyDrivers = (userLat, userLon) => {
 //   };
 
 // Send nearby drivers to connected riders
-
-// const broadcastNearbyDrivers = (driverId) => {
-//     const nearbyDrivers = drivers.filter(driver => driver.driverId !== driverId);
-  
-//     // Send the list of nearby drivers to all clients
-//     wss.clients.forEach(client => {
-//       if (client.readyState === WebSocket.OPEN) {
-//         client.send(JSON.stringify({ type: 'nearbyDrivers', data: nearbyDrivers }));
-//       }
-//     });
-//   };
-
-
-server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-});
-
-
-
-
-
-
 
 
 
