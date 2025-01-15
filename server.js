@@ -26,7 +26,7 @@ let drivers = [];
 
 wss.on("connection", (ws) => {
 
-    console.log('A driver has connected');
+    // console.log('A driver has connected');
 
     // Incomming messages handled here
 
