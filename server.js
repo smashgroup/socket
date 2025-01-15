@@ -109,7 +109,7 @@ wss.on("connection", (ws) => {
 
 const findNearbyDrivers = (userLat, userLon, drivers, maxDistance = 5000) => {
     // Filter drivers based on the distance to the user's location
-    const nearbyDrivers = drivers.filter((driver) => {
+    const nearbyDrivers = Object.entries(drivers).filter((driver) => {
       const distance = geolib.getDistance(
         { latitude: userLat, longitude: userLon },
         { latitude: driver.latitude, longitude: driver.longitude }
