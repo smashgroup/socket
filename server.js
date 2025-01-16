@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
           driver.latitude = latitude;
           driver.longitude = longitude;
 
-          console.log('congratulation a driver is updated')
+          console.log('congratulation a driver is updated', locationData)
         } else {
           // Add new driver to the list
           drivers.push({ driverId, latitude, longitude });
