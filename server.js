@@ -118,7 +118,7 @@ wss.on("connection", (ws) => {
 
             // update driver location
 
-            if (data.type === "locationUpdate" ) {
+            if (data.type === "locationUpdate" && role === "driver") {
 
                 // const { driverId, latitude, longitude } = data;
 
@@ -138,8 +138,8 @@ wss.on("connection", (ws) => {
 
 
                 drivers[data.driver] = {
-                    latitude: data.location.latitude,
-                    longitude: data.location.longitude,
+                    latitude: data.data.location.latitude,
+                    longitude: data.data.location.longitude,
                 }
 
                 console.log(`updated driver location:`, drivers[data.driver])
