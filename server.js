@@ -110,7 +110,7 @@ wss.on("connection", (ws) => {
 
     // Incomming messages handled here
 
-    ws.on("message", (message) => {
+    ws.on('message', (message) => {
 
         try {
 
@@ -128,26 +128,26 @@ wss.on("connection", (ws) => {
                 const { driverId, latitude, longitude } = data;
 
                 // Find the existing driver and update their position
-                let driver = drivers.find(d => d.driverId === driverId);
-                if (driver) {
-                  driver.latitude = latitude;
-                  driver.longitude = longitude;
+                // let driver = drivers.find(d => d.driverId === driverId);
+                // if (driver) {
+                //   driver.latitude = latitude;
+                //   driver.longitude = longitude;
 
-                  console.log('congratulation a driver is updated', data)
+                //   console.log('congratulation a driver is updated', data)
 
-                } else {
-                  // Add new driver to the list
-                  drivers.push({ driverId, latitude, longitude });
-                }
+                // } else {
+                //   // Add new driver to the list
+                //   drivers.push({ driverId, latitude, longitude });
+                // }
         
 
 
-                // drivers[data.driver] = {
-                //     latitude: data.latitude,
-                //     longitude: data.longitude,
-                // }
+                drivers[data.driver] = {
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                }
 
-                // console.log(`updated driver location:`, drivers[data.driver])
+                console.log(`updated driver location:`, drivers[data.driver])
             }
 
             // rider request for a nearby driver
